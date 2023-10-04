@@ -7,11 +7,12 @@ int main(void)
 {
 	char command[120];
 
-	while (true)
+	do
 	{
 		display_prompt();
 		read_user_command(command, sizeof(command));
 		command_executor(command);
 	}
+	while(true);
 	return (0);
 }
