@@ -12,5 +12,5 @@ void display_prompt()
 		perror("getcwd");
 		exit(EXIT_FAILURE);
 	}
-	printf("%s-$ ", cwd);
+	custom_printf((cwd);
 }
