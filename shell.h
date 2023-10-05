@@ -9,5 +9,5 @@
 int custom_printf(const char *output_string);
 void display_prompt(void);
 void command_executor(const char *command);
-void read_user_command(char *command, size_t size);
+void read_user_command(char **command, size_t *size);
 #endif

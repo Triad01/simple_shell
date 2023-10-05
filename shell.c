@@ -5,24 +5,14 @@
 */
 int main(void)
 {
-	char *command;
-
-	command = malloc(sizeof(command));
-
-	if (command == NULL)
-	{
-		perror("Memory allocatioin fail\n");
-		exit(EXIT_FAILURE);
-	}
-
-
+	char *command = NULL;
+	size_t size;
 
 	do {
 		display_prompt();
-		read_user_command(command, sizeof(command));
+		read_user_command(&command, &size);
 		command_executor(command);
 	} while (true);
 
-	free(command);
 	return (0);
 }

@@ -1,12 +1,16 @@
 #include "shell.h"
 /**
-* read_user_command - parses the command entered by the user
-* @command: the command to be parsed
-* @size: size of the command to be read
-*/
-void read_user_command(char *command, size_t size)
+ * read_user_command - parses the command entered by the user
+ * @command: the command to be parsed
+ * @size: size of the command to be read
+ */
+void read_user_command(char **command, size_t *size)
 {
-	if (fgets(command, size, stdin) == NULL)
+	ssize_t read;
+
+	read = getline(command, size, stdin);
+
+	if (read == -1)
 	{
 		if (feof(stdin))
 		{
@@ -15,9 +19,11 @@ void read_user_command(char *command, size_t size)
 		}
 		else
 		{
-			custom_printf("Error while trying to parse input\n");
+			perror("getline");
 			exit(EXIT_FAILURE);
 		}
 	}
-	command[strcspn(command, "\n")] = '\0';
+
+	if ((*command)[read - 1] == '\n')
+		(*command)[read - 1] = '\0';
 }
