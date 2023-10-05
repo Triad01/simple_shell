@@ -3,7 +3,7 @@
 * main - main entry into our program
 * Return: always an integer
 */
-int main()
+int main(void)
 {
 	char *command;
 

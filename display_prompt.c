@@ -3,19 +3,15 @@
 * display_prompt - displays a prompt for users to enter command
 *
 */
-void display_prompt()
+void display_prompt(void)
 {
-	char cwd[1024];
+	char cur_working_dir[1024];
 
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	if (getcwd(cur_working_dir, sizeof(cur_working_dir)) == NULL)
 	{
 		perror("getcwd");
 		exit(EXIT_FAILURE);
 	}
-<<<<<<< HEAD
-	custom_printf((cwd);
-=======
-	custom_printf(cwd);
+	custom_printf(cur_working_dir);
 	custom_printf("$ ");
->>>>>>> be49444093001eb6e929dd1979643886c660692c
 }
