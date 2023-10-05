@@ -3,7 +3,14 @@
 * display_prompt - displays a prompt for users to enter command
 *
 */
-void display_prompt(void)
+void display_prompt()
 {
-	custom_printf("EFFA-TRIAD_SHELL$ ");
+	char cwd[1024];
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	{
+		perror("getcwd");
+		exit(EXIT_FAILURE);
+	}
+	printf("%s-$ ", cwd);
 }
