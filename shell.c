@@ -3,7 +3,7 @@
 * main - main entry into our program
 * Return: always an integer
 */
-int main(void)
+int main()
 {
 	char *command;
 
@@ -14,6 +14,8 @@ int main(void)
 		perror("Memory allocatioin fail\n");
 		exit(EXIT_FAILURE);
 	}
+
+
 
 	do {
 		display_prompt();

@@ -12,5 +12,10 @@ void display_prompt()
 		perror("getcwd");
 		exit(EXIT_FAILURE);
 	}
+<<<<<<< HEAD
 	custom_printf((cwd);
+=======
+	custom_printf(cwd);
+	custom_printf("$ ");
+>>>>>>> be49444093001eb6e929dd1979643886c660692c
 }
