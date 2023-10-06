@@ -10,6 +10,7 @@ void command_executor(const char *command_line)
 	char *token, *args[128];
 	int argument_count = 0;
 	char *env[] = {"PATH=/usr/bin", NULL};
+	char *env[] = { "PATH=/usr/bin", NULL };
 	char *delim = " \n";
 	char command_path[] = "/bin/";
 
@@ -30,6 +31,9 @@ void command_executor(const char *command_line)
 
 		strcat(command_path, args[0]);
 
+		char command_path[125] = "/bin/";
+
+		strcat(command_path, args[0]);
 		if (execve(command_path, args, env) == -1)
 		{
 			perror("execve");
