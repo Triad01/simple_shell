@@ -9,7 +9,8 @@ int main(void)
 	size_t size;
 
 	do {
-		display_prompt();
+		if (isatty(0))
+			display_prompt();
 		read_user_command(&command, &size);
 		command_executor(command);
 	} while (true);

@@ -1,4 +1,5 @@
 #include "shell.h"
+
 /**
  * command_executor - executes the command and creates a child process
  * @command_line: the command to be executed
@@ -7,9 +8,10 @@ void command_executor(const char *command_line)
 {
 	pid_t child_process_id = fork();
 	char *token, *args[128];
-	int argument_count;
-	char *env[] = { "PATH=/bin", NULL };
+	int argument_count = 0;
+	char *env[] = {"PATH=/usr/bin", NULL};
 	char *delim = " \n";
+	char command_path[] = "/bin/";
 
 	if (child_process_id == -1)
 	{
@@ -26,12 +28,16 @@ void command_executor(const char *command_line)
 		}
 		args[argument_count] = NULL;
 
-		if (execve(args[0], args, env) == -1)
+		strcat(command_path, args[0]);
+
+		if (execve(command_path, args, env) == -1)
 		{
 			perror("execve");
 			exit(EXIT_FAILURE);
 		}
 	}
 	else
+	{
 		wait(NULL);
+	}
 }
