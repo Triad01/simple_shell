@@ -1,18 +1,17 @@
 #include "shell.h"
-
+extern char **environ;
 /**
- * command_executor - executes the command and creates a child process
- * @command_line: the command to be executed
- */
+* command_executor - executes the command and creates a child process
+* @command_line: the command to be executed
+*/
+void command_executor(const char *command_line);
 void command_executor(const char *command_line)
 {
-	pid_t child_process_id = fork();
-	char *token, *args[128];
+	char *args[128];
 	int argument_count = 0;
-	char *env[] = {"PATH=/usr/bin", NULL};
-	char *env[] = { "PATH=/usr/bin", NULL };
 	char *delim = " \n";
-	char command_path[] = "/bin/";
+
+	pid_t child_process_id = fork();
 
 	if (child_process_id == -1)
 	{
@@ -21,23 +20,39 @@ void command_executor(const char *command_line)
 	}
 	else if (child_process_id == 0)
 	{
-		token = strtok((char *)command_line, delim);
+		char *token = strtok((char *)command_line, delim);
+
 		while (token != NULL)
 		{
 			args[argument_count++] = token;
 			token = strtok(NULL, delim);
 		}
-		args[argument_count] = NULL;
+			args[argument_count] = NULL;
 
-		strcat(command_path, args[0]);
-
-		char command_path[125] = "/bin/";
-
-		strcat(command_path, args[0]);
-		if (execve(command_path, args, env) == -1)
+		if (strchr(args[0], '/') != NULL)
 		{
-			perror("execve");
-			exit(EXIT_FAILURE);
+			if (execve(args[0], args, environ) == -1)
+			{
+				perror("execve");
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+		{
+			char *path_envs = getenv("PATH");
+			char *paths = strtok(path_envs, ":");
+			while (paths != NULL)
+			{	
+				char full_paths[256];
+				snprintf(full_paths, sizeof(full_paths), "%s/%s", paths, args[0]);
+				if (execve(full_paths, args, environ) != -1)
+				{
+					return;
+				}
+				paths = strtok(NULL, ":");
+			}
+				perror("execve");
+				exit(EXIT_FAILURE);
 		}
 	}
 	else
