@@ -1,5 +1,4 @@
 #include "shell.h"
-extern char **environ;
 /**
 * command_executor - executes the command and creates a child process
 * @command_line: the command to be executed
@@ -10,6 +9,7 @@ void command_executor(const char *command_line)
 	char *args[128];
 	int argument_count = 0;
 	char *delim = " \n";
+	char *myenv[] = { "PATH=/usr/bin:/bin", NULL};
 
 	pid_t child_process_id = fork();
 
@@ -31,7 +31,7 @@ void command_executor(const char *command_line)
 
 		if (strchr(args[0], '/') != NULL)
 		{
-			if (execve(args[0], args, environ) == -1)
+			if (execve(args[0], args, myenv) == -1)
 			{
 				perror("execve");
 				exit(EXIT_FAILURE);
@@ -41,11 +41,13 @@ void command_executor(const char *command_line)
 		{
 			char *path_envs = getenv("PATH");
 			char *paths = strtok(path_envs, ":");
+
 			while (paths != NULL)
-			{	
+			{
 				char full_paths[256];
+
 				snprintf(full_paths, sizeof(full_paths), "%s/%s", paths, args[0]);
-				if (execve(full_paths, args, environ) != -1)
+				if (execve(full_paths, args, myenv) != -1)
 				{
 					return;
 				}
