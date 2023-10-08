@@ -30,10 +30,10 @@ void command_executor(const char *command_line)
 		args[argument_count] = NULL;
 
 		if (strcmp(args[0], "clear") == 0)
-                {
-                        system("clear");
-                        exit(EXIT_SUCCESS);
-                }
+		{
+			system("clear");
+			exit(EXIT_SUCCESS);
+		}
 
 		if (strchr(args[0], '/') != NULL)
 		{
