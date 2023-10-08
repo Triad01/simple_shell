@@ -31,7 +31,11 @@ void command_executor(const char *command_line)
 
 		if (strcmp(args[0], "clear") == 0)
 		{
-			system("clear");
+			if (system("clear") == -1)
+			{
+				perror("clear");
+				exit(EXIT_FAILURE);
+			}
 			exit(EXIT_SUCCESS);
 		}
 
