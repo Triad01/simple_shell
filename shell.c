@@ -5,13 +5,20 @@
 */
 int main(void)
 {
-	char *command = NULL;
+	char *command;
 	size_t size;
+
+	command = NULL;
 
 	do {
 		if (isatty(0))
 			display_prompt();
 		read_user_command(&command, &size);
+		if (strcmp(command, "exit") == 0)
+		{
+			free(command);
+			break;
+		}
 		command_executor(command);
 	} while (true);
 
