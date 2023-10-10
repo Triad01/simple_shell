@@ -53,6 +53,7 @@ void command_executor(const char *command_line)
 			char *path_copy = strdup(path_envs);
 			char *paths = strtok(path_copy, ":");
 
+			free(path_copy);
 			while (paths != NULL)
 			{
 				char full_paths[256];
@@ -60,7 +61,7 @@ void command_executor(const char *command_line)
 				snprintf(full_paths, sizeof(full_paths), "%s/%s", paths, args[0]);
 				if (execve(full_paths, args, myenv) != -1)
 				{
-					return;
+					exit(EXIT_SUCCESS);
 				}
 				paths = strtok(NULL, ":");
 			}

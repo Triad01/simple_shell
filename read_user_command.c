@@ -12,6 +12,12 @@ void read_user_command(char **command, size_t *size)
 
 	if (read == -1)
 	{
+		if (*command == NULL)
+		{
+			perror("getline");
+			exit(EXIT_FAILURE);
+		}
+
 		if (feof(stdin))
 		{
 			custom_printf("\n");
@@ -25,5 +31,8 @@ void read_user_command(char **command, size_t *size)
 	}
 
 	if ((*command)[read - 1] == '\n')
+	{
 		(*command)[read - 1] = '\0';
+		*size = strlen(*command);
+	}
 }

@@ -16,17 +16,21 @@ int main(int argc, char *argv[], char **env)
 	command = NULL;
 
 	do {
-		if (isatty(0))
+		if (isatty(0) == 1)
 			display_prompt();
 		read_user_command(&command, &size);
-		if (strcmp(command, "exit") == 0)
+		if (strcasecmp(command, "exit") == 0)
 		{
 			break;
 		}
-		if (strcmp(command, "env") == 0 || strcmp(command, "printenv") == 0)
+		if (strcasecmp(command, "env") == 0 || strcasecmp(command, "printenv") == 0)
 			print_env(env);
 		command_executor(command);
+		if (command != NULL)
+		{
+			free(command);
+			command = NULL;
+		}
 	} while (true);
-
 	return (0);
 }
