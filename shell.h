@@ -12,4 +12,5 @@ void display_prompt(void);
 void command_executor(const char *command);
 void read_user_command(char **command, size_t *size);
 void print_env(char **env);
+ssize_t _getline(char **buffer, size_t *static_size);
 #endif

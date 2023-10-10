@@ -21,7 +21,6 @@ int main(int argc, char *argv[], char **env)
 		read_user_command(&command, &size);
 		if (strcmp(command, "exit") == 0)
 		{
-			free(command);
 			break;
 		}
 		if (strcmp(command, "env") == 0 || strcmp(command, "printenv") == 0)
