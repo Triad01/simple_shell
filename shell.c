@@ -28,7 +28,7 @@ int main(int argc, char *argv[], char **env)
 		command_executor(command);
 		if (command != NULL)
 		{
-			free(command);
+			/*free(command);*/
 			command = NULL;
 		}
 	} while (true);
