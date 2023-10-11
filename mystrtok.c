@@ -1,8 +1,8 @@
 #include "shell.h"
 /**
- * _strtok - tokenization of string
+ * mystrtok - tokenization of string
  * @string: string to be tokenized
- * @delimiter: parsing of eaching string
+ * @delim: parsing of eaching string
  * Return: tokenptr
  */
 
@@ -11,7 +11,6 @@ char *mystrtok(char *string, const char *delim)
 	static char *last_token;
 	char *token_start;
 	char *tokenptr;
-	int i = 0;
 
 	if (string != NULL)
 	{
