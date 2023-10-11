@@ -6,7 +6,7 @@
  * Return: tokenptr
  */
 
-char *_strtok(char *string, char *delimiter)
+char *mystrtok(char *string, const char *delim)
 {
 	static char *last_token;
 	char *token_start;
@@ -18,7 +18,7 @@ char *_strtok(char *string, char *delimiter)
 		last_token = string;
 	}
 
-	while (*last_token != '\0' && strchr(delimiter, *last_token) != NULL)
+	while (*last_token != '\0' && strchr(delim, *last_token) != NULL)
 	{
 		last_token++;
 	}
@@ -30,7 +30,7 @@ char *_strtok(char *string, char *delimiter)
 
 	token_start = last_token;
 
-	while (*last_token != '\0' && strchr(delimiter, *last_token) == NULL)
+	while (*last_token != '\0' && strchr(delim, *last_token) == NULL)
 	{
 		last_token++;
 	}
