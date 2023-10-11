@@ -19,11 +19,11 @@ int main(int argc, char *argv[], char **env)
 		if (isatty(0) == 1)
 			display_prompt();
 		read_user_command(&command, &size);
-		if (strcasecmp(command, "exit") == 0)
+		if (strcmp(command, "exit") == 0)
 		{
 			break;
 		}
-		if (strcasecmp(command, "env") == 0 || strcasecmp(command, "printenv") == 0)
+		if (strcmp(command, "env") == 0 || strcmp(command, "printenv") == 0)
 			print_env(env);
 		command_executor(command);
 		if (command != NULL)
