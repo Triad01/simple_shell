@@ -8,7 +8,7 @@ void command_executor(const char *command_line)
 {
 	char *args[128];
 	int argument_count = 0;
-	char *delim = " \n";
+	char *delim = " \n\t";
 	char *myenv[] = {NULL};
 
 	pid_t child_process_id = fork();
@@ -20,16 +20,16 @@ void command_executor(const char *command_line)
 	}
 	else if (child_process_id == 0)
 	{
-		char *token = mystrtok((char *)command_line, delim);
+		char *token = strtok((char *)command_line, delim);
 
 		while (token != NULL)
 		{
 			args[argument_count++] = token;
-			token = mystrtok(NULL, delim);
-		}
+			token = strtok(NULL, delim);
+
 		args[argument_count] = NULL;
 
-		if (strcmp(args[0], "clear") == 0)
+		if (strcmp(command_line, "clear") == 0)
 		{
 			if (system("clear") == -1)
 			{
@@ -39,8 +39,9 @@ void command_executor(const char *command_line)
 			exit(EXIT_SUCCESS);
 		}
 
-		if (strchr(args[0], '/') != NULL)
+		if (strchr(command_line, '/') != NULL)
 		{
+
 			if (execve(args[0], args, myenv) == -1)
 			{
 				perror("execve");
@@ -53,11 +54,17 @@ void command_executor(const char *command_line)
 			char *path_copy = strdup(path_envs);
 			char *paths = strtok(path_copy, ":");
 
-			free(path_copy);
+			if (path_copy == NULL)
+			{
+				perror("strdup");
+				exit(EXIT_FAILURE);
+			}
+
+
 			while (paths != NULL)
 			{
 				char full_paths[256];
-
+				
 				snprintf(full_paths, sizeof(full_paths), "%s/%s", paths, args[0]);
 				if (execve(full_paths, args, myenv) != -1)
 				{
@@ -67,7 +74,9 @@ void command_executor(const char *command_line)
 			}
 
 			perror("execve");
+			free(path_copy);
 			exit(EXIT_FAILURE);
+		}
 		}
 	}
 	else
