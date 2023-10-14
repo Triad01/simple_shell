@@ -28,7 +28,8 @@ ssize_t _getline(char **buffer, size_t *static_size)
 	}
 	else if (num_read == 0)
 	{
-		custom_printf("\n");
+		if (isatty(0))
+			custom_printf("\n");
 		exit(EXIT_SUCCESS);
 	}
 

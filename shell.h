@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <sys/wait.h>
-char *mystrtok(char *str, const char *delim);
 int _putchar(char chararter);
 int custom_printf(const char *output_string);
 void display_prompt(void);

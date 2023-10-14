@@ -12,6 +12,7 @@ int main(int argc, char *argv[], char **env)
 	char *command;
 	size_t size;
 	int exit_status;
+	size_t newline_pos;
 
 	(void)argc;
 	(void)argv;
@@ -37,9 +38,15 @@ int main(int argc, char *argv[], char **env)
 			print_env(env);
 		command_executor(command);
 
+
+		newline_pos = strcspn(command, "\n");
+		if (newline_pos < size)
+			command[newline_pos] = '\0';
+
 		if (command != NULL)
 			command = NULL;
 	} while (true);
 
 	return (exit_status);
 }
+

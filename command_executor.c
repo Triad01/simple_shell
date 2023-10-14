@@ -20,12 +20,12 @@ void command_executor(const char *command_line)
 	}
 	else if (child_process_id == 0)
 	{
-		char *token = mystrtok((char *)command_line, delim);
+		char *token = strtok((char *)command_line, delim);
 
 		while (token != NULL)
 		{
 			args[argument_count++] = token;
-			token = mystrtok(NULL, delim);
+			token = strtok(NULL, delim);
 		}
 		args[argument_count] = NULL;
 

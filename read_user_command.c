@@ -27,6 +27,7 @@ void read_user_command(char **command, size_t *size)
 		{
 			perror("getline");
 			exit(EXIT_FAILURE);
+
 		}
 	}
 
