@@ -22,7 +22,7 @@ int main(int argc, char *argv[], char **env)
 	do {
 		if (isatty(0) == 1)
 			display_prompt();
-	read_user_command(&command, &size);
+		read_user_command(&command, &size);
 
 		if (strcmp(command, "exit") == 0)
 		{
@@ -40,7 +40,6 @@ int main(int argc, char *argv[], char **env)
 		if (command != NULL)
 			command = NULL;
 	} while (true);
-
 
 	return (exit_status);
 }
