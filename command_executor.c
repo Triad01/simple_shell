@@ -48,7 +48,23 @@ void command_executor(const char *command_line)
 				exit(EXIT_FAILURE);
 			}
 		}
+		else if (strcmp(args[0], "cd") == 0)
+		{
+			if (args[1] == NULL || strcmp(args[1], "~") == 0)
+			{
+				if (chdir(getenv("HOME")) == -1)
+				{
+					perror("chdir");
+					exit(EXIT_FAILURE);
+				}
+			}
+			else if (chdir(args[1]) == -1)
+			{
+				perror("chdir");
+				exit(EXIT_FAILURE);
+			}
 
+		}
 		else
 		{
 			char *path_envs = getenv("PATH");
