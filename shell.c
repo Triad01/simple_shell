@@ -13,33 +13,12 @@ int main(int argc, char *argv[], char **env)
 	char *command;
 	size_t size;
 	int exit_status;
-	FILE *input_file = NULL;
 	(void)argc;
 	(void)argv;
 
 	command = NULL;
 	exit_status = 0;
 
-	if (argc > 1)
-	{
-		input_file = fopen(argv[1], "r");
-
-		if (input_file == NULL)
-		{
-			perror("Error opening file");
-			return (EXIT_FAILURE);
-		}
-
-		while (getline(&command, &size, input_file))
-		{
-			command_executor(command);
-		}
-		if (input_file != NULL)
-			fclose(input_file);
-
-	}
-	else
-	{
 		do {
 			if (isatty(0) == 1)
 				display_prompt();
@@ -61,6 +40,5 @@ int main(int argc, char *argv[], char **env)
 			if (command != NULL)
 				command = NULL;
 		} while (true);
-	}
 	return (exit_status);
 }
