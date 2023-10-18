@@ -6,6 +6,9 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 int _putchar(char chararter);
 int custom_printf(const char *output_string);
 void display_prompt(void);
