@@ -1,37 +1,52 @@
-#include "shell.h"
+#include "test.h"
 /**
-* _getline - reads user input
-* @buffer: stores read input
-* @static_size: size of buffer to be read
-* Return: a signed integer
-*/
-ssize_t _getline(char **buffer, size_t *static_size)
+ * _getline - Read a line from a file descriptor
+ * @lineptr: Pointer to a pointer to the line buffer
+ * @n: Pointer to the size of the line buffer
+ * @fd: File descriptor to read from
+ *
+ * Return: 0 (success)
+ */
+ssize_t _getline(char **lineptr, size_t *n, int fd)
 {
-	static char static_buffer[1024];
+	char *temp;
+	char c;
+	size_t i = 0, j, initial_buffer_size = 128;
 
-	ssize_t num_read;
-
-	*buffer = NULL;
-
-	if (*buffer == NULL)
+	if (*lineptr == NULL || *n == 0)
 	{
-		*buffer = static_buffer;
+		*n = initial_buffer_size;
+		*lineptr = (char *)malloc(*n);
+		if (*lineptr == NULL)
+		{
+			perror("malloc failed");
+			return (-1);
+		}
 	}
-	*static_size = sizeof(static_buffer);
-
-	num_read = read(0, *buffer, *static_size);
-
-	if (num_read == -1)
+	while (read(fd, &c, 1) == 1 && c != '\n')
 	{
-		perror("Error");
-		exit(EXIT_FAILURE);
+		(*lineptr)[i++] = c;
+		if (i == *n)
+		{
+			*n *= 2;
+			temp = (char *)malloc(*n);
+			if (temp == NULL)
+			{
+				perror("malloc failed");
+				return (-1);
+			}
+			for (j = 0; j < i; j++)
+			{
+				temp[j] = (*lineptr)[j];
+			}
+			free(*lineptr);
+			*lineptr = temp;
+		}
 	}
-	else if (num_read == 0)
+	if (c == MY_EOF && i == 0)
 	{
-		if (isatty(0))
-			custom_printf("\n");
-		exit(EXIT_SUCCESS);
+		return (-1);
 	}
-
-	return (num_read);
+	(*lineptr)[i] = '\0';
+	return (i);
 }
