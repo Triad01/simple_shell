@@ -8,7 +8,7 @@ void read_user_command(char **command, size_t *size)
 {
 	ssize_t read;
 
-	read = _getline(command, size);
+	read = getline(command, size, stdin);
 
 	if (read == -1)
 	{
