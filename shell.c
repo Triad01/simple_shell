@@ -26,6 +26,7 @@ int main(int argc, char *argv[], char **env)
 
 			if (strcmp(command, "exit") == 0)
 			{
+				exit_status = 0;
 				break;
 			}
 			else if (strncmp(command, "exit ", 5) == 0)
