@@ -61,14 +61,14 @@ void command_executor(const char *command_line)
 				char full_paths[256];
 
 				snprintf(full_paths, sizeof(full_paths), "%s/%s", paths, args[0]);
-				if (execv(full_paths, args) != -1)
+				if (execve(full_paths, args, myenv) != -1)
 				{
 					exit(EXIT_SUCCESS);
 				}
 				paths = strtok(NULL, ":");
 			}
 
-			perror("execvp");
+			perror("execve");
 			exit(EXIT_FAILURE);
 		}
 	}
