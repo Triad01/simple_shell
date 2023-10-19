@@ -11,7 +11,7 @@ void command_executor(const char *command_line)
 {
 	char *args[128];
 	int argument_count = 0;
-	char *delim = " \n";
+	char *delim = " \n\t";
 	char *myenv[] = {NULL};
 	pid_t child_process_id = fork();
 
@@ -47,23 +47,6 @@ void command_executor(const char *command_line)
 				perror("execve");
 				exit(EXIT_FAILURE);
 			}
-		}
-		else if (strcmp(args[0], "cd") == 0)
-		{
-			if (args[1] == NULL || strcmp(args[1], "~") == 0)
-			{
-				if (chdir(getenv("HOME")) == -1)
-				{
-					perror("chdir");
-					exit(EXIT_FAILURE);
-				}
-			}
-			else if (chdir(args[1]) == -1)
-			{
-				perror("chdir");
-				exit(EXIT_FAILURE);
-			}
-
 		}
 		else
 		{
