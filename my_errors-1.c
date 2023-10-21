@@ -12,33 +12,19 @@ int my_erratoi(char *siz)
 	if (*siz == '+')
 		siz++;
 
-	a = 0;
-	while (siz[a] != '\0')
+	for (a = 0; siz[a] != '\0'; a++)
 	{
-		switch (siz[a])
+		if (siz[a] >= '0' && siz[a] <= '9')
 		{
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-				check *= 10;
-				check += (siz[a] - '0');
-				if (check > INT_MAX)
-					return (-1);
-				break;
-			default:
+			check *= 10;
+			check += (siz[a] - '0');
+			if (check > INT_MAX)
 				return (-1);
 		}
-		a++;
+		else
+			return (-1);
 	}
-
-	return ((int)check);
+	return (check);
 }
 /**
  * my_printerror - prints an error message to stdout

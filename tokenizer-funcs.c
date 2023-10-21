@@ -17,7 +17,8 @@ char **mystrtow(char *s, char *dy)
 	if (!dy)
 		dy = " ";
 	for (in = 0; s[in] != '\0'; in++)
-		if (!my_isdelimeter(s[in], dy) && (my_isdelimeter(s[in + 1], dy) || !s[in + 1]))
+		if (!my_isdelimeter(s[in], dy) && (my_isdelimeter(s[in + 1], dy) ||
+		!s[in + 1]))
 			mynumwords++;
 
 	if (mynumwords == 0)
@@ -89,5 +90,6 @@ char **mystrtow2(char *stry, char dy)
 		sn[jn][mn] = 0;
 	}
 	sn[jn] = NULL;
+
 	return (sn);
 }

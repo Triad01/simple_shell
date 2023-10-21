@@ -73,6 +73,7 @@ int my_replacealias(info_t *inf)
 	int in;
 	list_t *noder;
 	char *pin;
+
 	for (in = 0; in < 10; in++)
 	{
 		noder = my_nodestartswith(inf->my_alias, inf->my_argv[0], '=');
