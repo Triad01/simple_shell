@@ -44,11 +44,12 @@ int my_writehistory(info_t *inf)
 	if (fid == -1)
 		return (-1);
 
-	do {
+	while (noder)
+	{
 		my_putsfd(noder->string, fid);
 		my_putfd('\n', fid);
 		noder = noder->nexts;
-	} while (noder);
+	}
 
 	my_putfd(MYBUFLUSH, fid);
 	close(fid);
@@ -99,16 +100,11 @@ int read_history(info_t *inf)
 
 	for (a = 0; a < myf_size; a++)
 	{
-		switch (buffer[a])
+		if (buffer[a] == '\n')
 		{
-			case '\n':
-				buffer[a] = 0;
-				my_buildhistorylist(inf, buffer + mylast, myline_count++);
-				mylast = a + 1;
-				break;
-
-			default:
-				break;
+			buffer[a] = 0;
+			my_buildhistorylist(inf, buffer + mylast, myline_count++);
+			mylast = a + 1;
 		}
 	}
 
@@ -155,12 +151,10 @@ int my_renumberhistory(info_t *inf)
 	list_t *noder = inf->my_history;
 	int a = 0;
 
-	if (noder)
+	while (noder)
 	{
-		do {
-			noder->number = a++;
-			noder = noder->nexts;
-		} while (noder);
+		noder->number = a++;
+		noder = noder->nexts;
 	}
 
 	return (inf->hcount = a);

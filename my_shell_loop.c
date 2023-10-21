@@ -107,7 +107,10 @@ void my_findcmd(info_t *inf)
 	}
 	else
 	{
-		if ((my_interactiveness(inf) || my_getenv(inf, "PATH=") || inf->my_argv[0][0] == '/') && my_iscmd(inf, inf->my_argv[0]))
+		if ((my_interactiveness(inf) ||
+			 my_getenv(inf, "PATH=") ||
+			 inf->my_argv[0][0] == '/') &&
+			my_iscmd(inf, inf->my_argv[0]))
 			my_forkcmd(inf);
 		else if (*(inf->argsm) != '\n')
 		{
@@ -125,30 +128,32 @@ void my_forkcmd(info_t *inf)
 {
 	pid_t mychild_pid;
 
-	switch ((mychild_pid = fork()))
+	mychild_pid = fork();
+	if (mychild_pid == -1)
 	{
-		case -1:
-			perror("Error:");
-			return;
+		perror("Error:");
+		return;
+	}
 
-		case 0:
-			if (execve(inf->my_path, inf->my_argv, my_getenvironment(inf)) == -1)
-			{
-				my_freeinfo(inf, 1);
-				if (errno == EACCES)
-					exit(126);
-				exit(1);
-			}
-			break;
-		default:
-			wait(&(inf->my_status));
-			if (WIFEXITED(inf->my_status))
-			{
-				inf->my_status = WEXITSTATUS(inf->my_status);
-				if (inf->my_status == 126)
-					my_printerror(inf, "Permission denied\n");
-			}
-			break;
+	if (mychild_pid == 0)
+	{
+		if (execve(inf->my_path, inf->my_argv, my_getenvironment(inf)) == -1)
+		{
+			my_freeinfo(inf, 1);
+			if (errno == EACCES)
+				exit(126);
+			exit(1);
+		}
+	}
+	else
+	{
+		wait(&(inf->my_status));
+		if (WIFEXITED(inf->my_status))
+		{
+			inf->my_status = WEXITSTATUS(inf->my_status);
+			if (inf->my_status == 126)
+				my_printerror(inf, "Permission denied\n");
+		}
 	}
 }
 

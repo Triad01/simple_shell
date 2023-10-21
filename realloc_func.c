@@ -10,13 +10,8 @@ char *my_memset(char *sy, char by, unsigned int ny)
 {
 	unsigned int in = 0;
 
-	if (ny > 0)
-	{
-		do {
-			sy[in] = by;
-			in++;
-		} while (in < ny);
-	}
+	for (; in < ny; in++)
+		sy[in] = by;
 
 	return (sy);
 }
@@ -50,29 +45,14 @@ void *my_realloc(void *myptr, unsigned int myold_size, unsigned int mynew_size)
 {
 	char *pin;
 
-	switch (!myptr)
-	{
-		case 1:
-			return (malloc(mynew_size));
-		default:
-			break;
-	}
+	if (!myptr)
+		return (malloc(mynew_size));
 
-	switch (!mynew_size)
-	{
-		case 1:
-			return (free(myptr), NULL);
-		default:
-			break;
-	}
+	if (!mynew_size)
+		return (free(myptr), NULL);
 
-	switch (mynew_size == myold_size)
-	{
-		case 1:
-			return (myptr);
-		default:
-			break;
-	}
+	if (mynew_size == myold_size)
+		return (myptr);
 
 	pin = malloc(mynew_size);
 	if (!pin)
@@ -80,10 +60,11 @@ void *my_realloc(void *myptr, unsigned int myold_size, unsigned int mynew_size)
 
 	myold_size = myold_size < mynew_size ? myold_size : mynew_size;
 
-	do {
+	while (myold_size)
+	{
 		pin[myold_size - 1] = ((char *)myptr)[myold_size - 1];
 		myold_size--;
-	} while (myold_size);
+	}
 
 	free(myptr);
 	return (pin);

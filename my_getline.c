@@ -13,9 +13,8 @@ ssize_t my_inputbuffers(info_t *inf, char **buffer, size_t *length)
 	ssize_t real = 0;
 	size_t len_pointer = 0;
 
-	switch (*length)
+	if (!*length)
 	{
-	case 0:
 		free(*buffer);
 		*buffer = NULL;
 		signal(SIGINT, my_sigintHandler);
@@ -43,13 +42,10 @@ ssize_t my_inputbuffers(info_t *inf, char **buffer, size_t *length)
 				inf->mycmduf = buffer;
 			}
 		}
-		break;
-
-	default:
-		break;
-	}
 
 	return (real);
+	}
+	return (0);
 }
 /**
  * my_getinput - gets input from stream
@@ -63,14 +59,10 @@ ssize_t my_getinput(info_t *inf)
 	ssize_t real = 0;
 	char **buf = &(inf->argsm), *point;
 
-	switch (real = my_inputbuffers(inf, &buffer, &length))
-	{
-	case -1:
+	my_putchar(MYBUFLUSH);
+	real = my_inputbuffers(inf, &buffer, &length);
+	if (real == -1)
 		return (-1);
-	default:
-		break;
-	}
-
 	if (length)
 	{
 		b = a;
@@ -111,18 +103,14 @@ ssize_t my_readbuf(info_t *inf, char *buffer, size_t *in)
 {
 	ssize_t real = 0;
 
-	switch (*in)
-	{
-	case 0:
-		real = read(inf->reader, buffer, MYREADSIZE);
-		if (real >= 0)
-		{
-			*in = real;
-		}
-		return (real);
-	default:
+	if (*in)
 		return (0);
+	real = read(inf->reader, buffer, MYREADSIZE);
+	if (real >= 0)
+	{
+		*in = real;
 	}
+	return (real);
 }
 /**
  * my_getline - gets the next line of input from an input stream
@@ -139,13 +127,11 @@ int my_getline(info_t *inf, char **pointer, size_t *len)
 	ssize_t real = 0, c = 0;
 	char *point = NULL, *mynew_point = NULL, *d;
 
-	switch (point = *pointer, a == length)
-	{
-	case 1:
+	point = *pointer;
+	if (point && len)
+		c = *len;
+	if (a == length)
 		a = length = 0;
-	default:
-		break;
-	}
 
 	real = my_readbuf(inf, buffer, &length);
 	if (real == -1 || (real == 0 && length == 0))
@@ -157,17 +143,8 @@ int my_getline(info_t *inf, char **pointer, size_t *len)
 	b = d ? 1 + (unsigned int)(d - buffer) : length;
 	mynew_point = my_realloc(point, c, c ? c + b : b + 1);
 
-	switch (!mynew_point)
-	{
-	case 1:
-		if (point)
-		{
-			free(point);
-		}
-		return (-1);
-	default:
-		break;
-	}
+	if (!mynew_point)
+		return (!point ? free(point), -1 : -1);
 
 	if (c)
 	{

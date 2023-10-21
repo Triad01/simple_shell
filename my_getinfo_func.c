@@ -39,20 +39,8 @@ void my_setinfo(info_t *inf, char **avs)
 		}
 		inf->my_argc = a;
 
-		switch (my_replacealias(inf))
-		{
-			case 0:
-				switch (my_replacevars(inf))
-				{
-					case 0:
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
+		my_replacealias(inf);
+		my_replacevars(inf);
 	}
 }
 /**
@@ -66,25 +54,21 @@ void my_freeinfo(info_t *inf, int al)
 	inf->my_argv = NULL;
 	inf->my_path = NULL;
 
-	switch (al)
+	if (al)
 	{
-		case 1:
-			if (!inf->mycmduf)
-				free(inf->argsm);
-			if (inf->my_env)
-				my_freelist(&(inf->my_env));
-			if (inf->my_history)
-				my_freelist(&(inf->my_history));
-			if (inf->my_alias)
-				my_freelist(&(inf->my_alias));
-			my_ffree(inf->my_envir);
-			inf->my_envir = NULL;
-			my_bfree((void **)inf->mycmduf);
-			if (inf->reader > 2)
-				close(inf->reader);
-			my_putchar(MYBUFLUSH);
-			break;
-		default:
-			break;
+		if (!inf->mycmduf)
+			free(inf->argsm);
+		if (inf->my_env)
+			my_freelist(&(inf->my_env));
+		if (inf->my_history)
+			my_freelist(&(inf->my_history));
+		if (inf->my_alias)
+			my_freelist(&(inf->my_alias));
+		my_ffree(inf->my_envir);
+		inf->my_envir = NULL;
+		my_bfree((void **)inf->mycmduf);
+		if (inf->reader > 2)
+			close(inf->reader);
+		my_putchar(MYBUFLUSH);
 	}
 }

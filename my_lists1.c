@@ -35,7 +35,8 @@ char **my_listtostrings(list_t *hd)
 		return (NULL);
 
 	a = 0;
-	do {
+	while (noder)
+	{
 		stri = malloc(my_strlen(noder->string) + 1);
 		if (!stri)
 		{
@@ -49,7 +50,7 @@ char **my_listtostrings(list_t *hd)
 		strcs[a] = stri;
 		noder = noder->nexts;
 		a++;
-	} while (noder);
+	}
 
 	strcs[a] = NULL;
 	return (strcs);
@@ -66,7 +67,8 @@ size_t my_printlist(const list_t *hd)
 	if (!hd)
 		return (a);
 
-	do {
+	while (hd)
+	{
 		my_puts(my_convertnumber(hd->number, 10, 0));
 		my_putchar(':');
 		my_putchar(' ');
@@ -74,7 +76,7 @@ size_t my_printlist(const list_t *hd)
 		my_puts("\n");
 		hd = hd->nexts;
 		a++;
-	} while (hd);
+	}
 
 	return (a);
 }
@@ -92,12 +94,13 @@ list_t *my_nodestartswith(list_t *noder, char *pref, char cha)
 	if (!noder)
 		return (NULL);
 
-	do {
+	while (noder)
+	{
 		point = my_startswith(noder->string, pref);
 		if (point && ((cha == -1) || (*point == cha)))
 			return (noder);
 		noder = noder->nexts;
-	} while (noder);
+	}
 
 	return (NULL);
 }

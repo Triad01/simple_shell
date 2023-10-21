@@ -9,13 +9,11 @@ int my_bfree(void **pointer)
 {
 	int my_freed = 0;
 
-	switch (pointer && *pointer)
+	if (pointer && *pointer)
 	{
-	case 1:
 		free(*pointer);
 		*pointer = NULL;
-		my_freed = 1;
-		break;
+		return (1);
 	}
 
 	return (my_freed);

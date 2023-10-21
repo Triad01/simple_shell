@@ -14,13 +14,9 @@ int my_iscmd(info_t *inf, char *mypath)
 	if (!mypath || stat(mypath, &stats))
 		return (0);
 
-	switch (stats.st_mode & S_IFMT)
-	{
-	case S_IFREG:
+	if (stats.st_mode & __S_IFREG)
 		return (1);
-	default:
-		return (0);
-	}
+	return (0);
 }
 /**
  * my_dupchars - entry
@@ -54,7 +50,7 @@ char *my_dupchars(char *mypathstring, int mystart, int mystop)
  */
 char *my_findpath(info_t *myinfo, char *mypathstr, char *mycmd)
 {
-	int a;
+	int a = 0;
 	int my_currpos = 0;
 	char *mypath = NULL;
 
@@ -66,26 +62,25 @@ char *my_findpath(info_t *myinfo, char *mypathstr, char *mycmd)
 			return (mycmd);
 	}
 
-	for (a = 0; mypathstr[a]; a++)
+	while (1)
 	{
-		switch (mypathstr[a])
+		if (!mypathstr[a] || mypathstr[a] == ':')
 		{
-			case ':':
-				mypath = my_dupchars(mypathstr, my_currpos, a);
-				if (!*mypath)
-					my_strcat(mypath, mycmd);
-				else
-				{
-					my_strcat(mypath, "/");
-					my_strcat(mypath, mycmd);
-				}
-
-				if (my_iscmd(myinfo, mypath))
-					return (mypath);
-
-				my_currpos = a;
+			mypath = my_dupchars(mypathstr, my_currpos, a);
+			if (!*mypath)
+				my_strcat(mypath, mycmd);
+			else
+			{
+				my_strcat(mypath, "/");
+				my_strcat(mypath, mycmd);
+			}
+			if (my_iscmd(myinfo, mypath))
+				return (mypath);
+			if (!mypathstr[a])
 				break;
+			my_currpos = a;
 		}
+		a++;
 	}
 	return (NULL);
 }
