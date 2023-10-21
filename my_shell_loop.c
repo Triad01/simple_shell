@@ -12,56 +12,35 @@ int my_hsh(info_t *inf, char **avs)
 	ssize_t in;
 	int my_b;
 
-	for (in = 0, my_b = 0; in != -1 && my_b != -2; my_clearinfo(inf))
+	while (in != -1 && my_b != -2)
 	{
+		my_clearinfo(inf);
 		if (my_interactiveness(inf))
-		{
 			my_puts("$ ");
-		}
 		my_eputchar(MYBUFLUSH);
 		in = my_getinput(inf);
-
 		if (in != -1)
 		{
 			my_setinfo(inf, avs);
 			my_b = my_findbuiltin(inf);
-
-			switch (my_b)
-			{
-				case -1:
-					my_findcmd(inf);
-					break;
-				default:
-					break;
-			}
+			if (my_b == -1)
+				my_findcmd(inf);
 		}
 		else if (my_interactiveness(inf))
-		{
 			my_putchar('\n');
-		}
 		my_freeinfo(inf, 0);
 	}
-
 	my_writehistory(inf);
 	my_freeinfo(inf, 1);
-
 	if (!my_interactiveness(inf) && inf->my_status)
-	{
 		exit(inf->my_status);
-	}
-
-	switch (my_b)
+	if (my_b == -2)
 	{
-		case -2:
-			if (inf->my_errnum == -1)
-			{
-				exit(inf->my_status);
-			}
-			exit(inf->my_errnum);
-			break;
-		default:
-			return (my_b);
-		}
+		if (inf->my_errnum == -1)
+			exit(inf->my_status);
+		exit(inf->my_errnum);
+	}
+	return (my_b);
 }
 /**
  * my_findbuiltin - entry point
@@ -108,30 +87,17 @@ void my_findcmd(info_t *inf)
 	int in = 0;
 	int ki = 0;
 
-	switch (inf->mylineflag)
+	inf->my_path = inf->my_argv[0];
+	if (inf->mylineflag == 1)
 	{
-		case 1:
-			inf->my_linecount++;
-			inf->mylineflag = 0;
-			break;
+		inf->my_linecount++;
+		inf->mylineflag = 0;
 	}
-
-	while (inf->argsm[in])
-	{
-		switch (!my_isdelimeter(inf->argsm[in], " \t\n"))
-		{
-			case 1:
-				ki++;
-				break;
-		}
-		in++;
-	}
-
-	switch (ki)
-	{
-		case 0:
-			return;
-	}
+	for (in = 0, ki = 0; inf->argsm[in]; in++)
+		if (!my_isdelimeter(inf->argsm[in], " \t\n"))
+			ki++;
+	if (!ki)
+		return;
 
 	pathers = my_findpath(inf, my_getenv(inf, "PATH="), inf->my_argv[0]);
 	if (pathers)
@@ -141,21 +107,9 @@ void my_findcmd(info_t *inf)
 	}
 	else
 	{
-	switch (
-			my_interactiveness(inf) ||
-			my_getenv(inf, "PATH=") ||
-			inf->my_argv[0][0] == '/'
-			)
-		{
-			case 1:
-				if (my_iscmd(inf, inf->my_argv[0]))
-				{
-					my_forkcmd(inf);
-				}
-				break;
-		}
-
-		if (*(inf->argsm) != '\n')
+		if ((my_interactiveness(inf) || my_getenv(inf, "PATH=") || inf->my_argv[0][0] == '/') && my_iscmd(inf, inf->my_argv[0]))
+			my_forkcmd(inf);
+		else if (*(inf->argsm) != '\n')
 		{
 			inf->my_status = 127;
 			my_printerror(inf, "not found\n");

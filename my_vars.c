@@ -9,34 +9,26 @@
 int my_ischain(info_t *infos, char *buffs, size_t *pin)
 {
 	size_t a = *pin;
-	char my_currentChar = buffs[a];
 
-	switch (my_currentChar)
+	if (buffs[a] == '|' && buffs[a + 1] == '|')
 	{
-		case '|':
-			if (buffs[a + 1] == '|')
-			{
-				buffs[a] = 0;
-				a++;
-				infos->cmdtype = MYCMDOR;
-			}
-			break;
-		case '&':
-			if (buffs[a + 1] == '&')
-			{
-				buffs[a] = 0;
-				a++;
-				infos->cmdtype = MYCMDAND;
-			}
-			break;
-		case ';':
-			buffs[a] = 0;
-			infos->cmdtype = MYCMDCHAIN;
-			break;
-		default:
-			return (0);
+		buffs[a] = 0;
+		a++;
+		infos->cmdtype = MYCMDOR;
 	}
-
+	else if (buffs[a] == '&' && buffs[a + 1] == '&')
+	{
+		buffs[a] = 0;
+		a++;
+		infos->cmdtype = MYCMDAND;
+	}
+	else if (buffs[a] == ';')
+	{
+		buffs[a] = 0;
+		infos->cmdtype = MYCMDCHAIN;
+	}
+	else
+		return (0);
 	*pin = a;
 	return (1);
 }
@@ -52,22 +44,21 @@ void my_checkchain(info_t *inf, char *bfs, size_t *pin, size_t in, size_t l)
 {
 	size_t a = *pin;
 
-	switch (inf->cmdtype)
+	if (inf->cmdtype == MYCMDAND)
 	{
-	case MYCMDAND:
 		if (inf->my_status)
 		{
 			bfs[in] = 0;
 			a = l;
 		}
-		break;
-	case MYCMDOR:
+	}
+	if (inf->cmdtype == MYCMDOR)
+	{
 		if (!inf->my_status)
 		{
 			bfs[in] = 0;
 			a = l;
 		}
-		break;
 	}
 
 	*pin = a;
@@ -79,28 +70,23 @@ void my_checkchain(info_t *inf, char *bfs, size_t *pin, size_t in, size_t l)
  */
 int my_replacealias(info_t *inf)
 {
-	int in = 0;
+	int in;
 	list_t *noder;
 	char *pin;
-
-	do {
+	for (in = 0; in < 10; in++)
+	{
 		noder = my_nodestartswith(inf->my_alias, inf->my_argv[0], '=');
 		if (!noder)
 			return (0);
-
 		free(inf->my_argv[0]);
 		pin = my_strchr(noder->string, '=');
 		if (!pin)
 			return (0);
-
 		pin = my_strdup(pin + 1);
 		if (!pin)
 			return (0);
-
 		inf->my_argv[0] = pin;
-		in++;
-	} while (in < 10);
-
+	}
 	return (1);
 }
 /**
@@ -113,40 +99,32 @@ int my_replacevars(info_t *infos)
 	int in = 0;
 	list_t *noder;
 
-	while (infos->my_argv[in])
+	for (in = 0; infos->my_argv[in]; in++)
 	{
 		if (infos->my_argv[in][0] != '$' || !infos->my_argv[in][1])
-		{
-			in++;
 			continue;
-		}
 
-		switch (infos->my_argv[in][1])
+		if (!my_strcmp(infos->my_argv[in], "$?"))
 		{
-		case '?':
 			my_replacestring(&(infos->my_argv[in]),
 							 my_strdup(my_convertnumber(infos->my_status, 10, 0)));
-			break;
-		case '$':
+			continue;
+		}
+		if (!my_strcmp(infos->my_argv[in], "$$"))
+		{
 			my_replacestring(&(infos->my_argv[in]),
 							 my_strdup(my_convertnumber(getpid(), 10, 0)));
-			break;
-		default:
-			noder = my_nodestartswith(infos->my_env, &(infos->my_argv[in][1]), '=');
-			if (noder)
-			{
-				my_replacestring(&(infos->my_argv[in]),
-								 my_strdup(my_strchr(noder->string, '=') + 1));
-			}
-			else
-			{
-				my_replacestring(&(infos->my_argv[in]), my_strdup(""));
-			}
+			continue;
 		}
-
-		in++;
+		noder = my_nodestartswith(infos->my_env, &infos->my_argv[in][1], '=');
+		if (noder)
+		{
+			my_replacestring(&(infos->my_argv[in]),
+							 my_strdup(my_strchr(noder->string, '=') + 1));
+			continue;
+		}
+		my_replacestring(&infos->my_argv[in], my_strdup(""));
 	}
-
 	return (0);
 }
 /**

@@ -9,33 +9,26 @@ int my_myexit(info_t *inf);
 int my_myexit(info_t *inf)
 {
 	int exit;
-	int check = -2;
 
-	switch (inf->my_argv[1] ? 1 : 0)
+	if (inf->my_argv[1])
 	{
-		case 1:
-			exit = my_erratoi(inf->my_argv[1]);
-			if (exit == -1)
-			{
-				inf->my_status = 2;
-				my_printerror(inf, "unacceptable number: ");
-				my_eputs(inf->my_argv[1]);
-				my_eputchar('\n');
-				check = 1;
-			}
-			else
-			{
-				inf->my_errnum = exit;
-				check = -2;
-			}
-			break;
-		case 0:
-			inf->my_errnum = -1;
-			check = -2;
-			break;
+		exit = my_erratoi(inf->my_argv[1]);
+		if (exit == -1)
+		{
+			inf->my_status = 2;
+			my_printerror(inf, "unacceptable number: ");
+			my_eputs(inf->my_argv[1]);
+			my_eputchar('\n');
+			return (1);
+		}
+		else
+		{
+			inf->my_errnum = my_erratoi(inf->my_argv[1]);
+			return (-2);
+		}
 	}
-
-	return (check);
+	inf->my_errnum = -1;
+	return (-2);
 }
 /**
  * my_mycd - changes the current directory of the process
@@ -44,34 +37,34 @@ int my_myexit(info_t *inf)
  */
 int my_mycd(info_t *inf)
 {
-	char *s, *dir, buffer[1024];
-	int chdir_ret;
+	char *si, *diir, buffer[1024];
+	int chdirret;
 
-	s = getcwd(buffer, 1024);
-	if (!s)
+	si = getcwd(buffer, 1024);
+	if (!si)
 		my_puts("TODO: >>getcwd failure emsg here<<\n");
 	if (!inf->my_argv[1])
 	{
-		dir = my_getenv(inf, "HOME=");
-		if (!dir)
-			chdir_ret = chdir((dir = my_getenv(inf, "PWD=")) ? dir : "/");
+		diir = my_getenv(inf, "HOME=");
+		if (!diir)
+			chdirret = chdir((diir = my_getenv(inf, "PWD=")) ? diir : "/");
 		else
-			chdir_ret = chdir(dir);
+			chdirret = chdir(diir);
 	}
 	else if (my_strcmp(inf->my_argv[1], "-") == 0)
 	{
 		if (!my_getenv(inf, "OLDPWD="))
 		{
-			my_puts(s);
+			my_puts(si);
 			my_putchar('\n');
 			return (1);
 		}
 		my_puts(my_getenv(inf, "OLDPWD=")), my_putchar('\n');
-		chdir_ret = chdir((dir = my_getenv(inf, "OLDPWD=")) ? dir : "/");
+		chdirret = chdir((diir = my_getenv(inf, "OLDPWD=")) ? diir : "/");
 	}
 	else
-		chdir_ret = chdir(inf->my_argv[1]);
-	if (chdir_ret == -1)
+		chdirret = chdir(inf->my_argv[1]);
+	if (chdirret == -1)
 	{
 		my_printerror(inf, "can't cd to ");
 		my_eputs(inf->my_argv[1]), my_eputchar('\n');
@@ -95,14 +88,8 @@ int my_myhelp(info_t *inf)
 	my_argarray = inf->my_argv;
 	my_puts("Help function is not yet implemented.\n");
 
-	switch (0)
-	{
-		case 0:
-			my_puts(*my_argarray);
-			break;
-		default:
-			break;
-	}
+	if (0)
+		my_puts(*my_argarray);
 
 	return (0);
 }

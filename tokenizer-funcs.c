@@ -12,56 +12,26 @@ char **mystrtow(char *s, char *dy)
 	int in, jn, kn, mn, mynumwords = 0;
 	char **sn;
 
-	if (!s || !s[0])
+	if (s == NULL || s[0] == 0)
 		return (NULL);
-
 	if (!dy)
 		dy = " ";
-
-	in = 0;
-	while (s[in] != '\0')
-	{
-		char mycurrent = s[in];
-
-		switch (mycurrent)
-		{
-			case '\0':
-				break;
-
-			case ' ':
-			case '\t':
-			case '\n':
-				while (s[in] == ' ' || s[in] == '\t' || s[in] == '\n')
-					in++;
-				break;
-
-			default:
-				mynumwords++;
-				while (s[in] != ' ' && s[in] != '\t' && s[in] != '\n' && s[in] != '\0')
-					in++;
-				break;
-		}
-	}
+	for (in = 0; s[in] != '\0'; in++)
+		if (!my_isdelimeter(s[in], dy) && (my_isdelimeter(s[in + 1], dy) || !s[in + 1]))
+			mynumwords++;
 
 	if (mynumwords == 0)
 		return (NULL);
-
 	sn = malloc((1 + mynumwords) * sizeof(char *));
 	if (!sn)
 		return (NULL);
-
-	in = 0;
-	jn = 0;
-	while (jn < mynumwords)
+	for (in = 0, jn = 0; jn < mynumwords; jn++)
 	{
-		while (s[in] == ' ' || s[in] == '\t' || s[in] == '\n')
+		while (my_isdelimeter(s[in], dy))
 			in++;
-
 		kn = 0;
-		while (s[in + kn] != ' ' && s[in + kn] != '\t'
-			&& s[in + kn] != '\n' && s[in + kn] != '\0')
+		while (!my_isdelimeter(s[in + kn], dy) && s[in + kn])
 			kn++;
-
 		sn[jn] = malloc((kn + 1) * sizeof(char));
 		if (!sn[jn])
 		{
@@ -70,14 +40,10 @@ char **mystrtow(char *s, char *dy)
 			free(sn);
 			return (NULL);
 		}
-
 		for (mn = 0; mn < kn; mn++)
 			sn[jn][mn] = s[in++];
-
-		sn[jn][mn] = '\0';
-		jn++;
+		sn[jn][mn] = 0;
 	}
-
 	sn[jn] = NULL;
 	return (sn);
 }

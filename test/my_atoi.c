@@ -17,9 +17,15 @@ int my_interactiveness(info_t *infos)
  */
 int my_isdelimeter(char charact, char *delimeter)
 {
-	while (*delimeter)
-		if (*delimeter++ == charact)
+	int a;
+
+	for (a = 0; delimeter[a] != '\0'; a++)
+	{
+		if (delimeter[a] == charact)
+		{
 			return (1);
+		}
+	}
 	return (0);
 }
 /**
@@ -44,18 +50,27 @@ int my_atoi(char *strings)
 	int i = 0, sgn = 1, fg = 0, out = 0;
 	unsigned int score = 0;
 
-	for (i = 0; strings[i] != '\0' && fg != 2; i++)
+	while (strings[i] != '\0' && fg != 2)
 	{
-		if (strings[i] == '-')
-			sgn *= -1;
-		if (strings[i] >= '0' && strings[i] <= '9')
+		switch (strings[i])
 		{
-			fg = 1;
-			score *= 10;
-			score += (strings[i] - '0');
+			case '-':
+				sgn *= -1;
+				break;
+			default:
+				if (strings[i] >= '0' && strings[i] <= '9')
+				{
+					fg = 1;
+					score *= 10;
+					score += (strings[i] - '0');
+				}
+				else if (fg == 1)
+				{
+					fg = 2;
+				}
+				break;
 		}
-		else if (fg == 1)
-			fg = 2;
+		i++;
 	}
 	if (sgn == -1)
 		out = -score;
