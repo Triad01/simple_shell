@@ -12,65 +12,43 @@ int my_myhistory(info_t *inf)
 /**
  * my_unsetalias - removes alias to a string
  * @inf: parameter
- * @strings: the string alias
+ * @string: the string alias
  * Return: Always an integer
  */
-int my_unsetalias(info_t *inf, char *strings)
+int my_unsetalias(info_t *inf, char *string)
 {
-	char *point = strings;
-	int real;
+	char *my_pointer, c;
+	int my_result;
 
-	while (*point)
-	{
-		switch (*point)
-		{
-			case '=':
-				*point = '\0';
-				real = my_delete(&(inf->my_alias),
-my_getnodeindex(inf->my_alias, my_nodestartswith(inf->my_alias, strings, -1)));
-				*point = '=';
-				return (real);
-			default:
-				point++;
-		}
-	}
-
-	return (1);
+	my_pointer = my_strchr(string, '=');
+	if (!my_pointer)
+		return (1);
+	c = *my_pointer;
+	*my_pointer = 0;
+	my_result = my_delete(&(inf->my_alias),
+	my_getnodeindex(inf->my_alias, my_nodestartswith(inf->my_alias, string, -1)));
+	*my_pointer = c;
+	return (my_result);
 }
 /**
  * my_setalias - sets alias to string
  * @inf: parameter
- * @strings: the string alias
+ * @string: the string alias
  * Return: Always an integer
  */
-int my_setalias(info_t *inf, char *strings)
+
+int my_setalias(info_t *inf, char *string)
 {
-	char *point = strings;
-	int real = 0;
-	char a;
+	char *my_pointer;
 
-	while (*point)
-	{
-		switch (*point)
-		{
-			case '=':
-				a = *point;
-				*point = '\0';
-				if (!*++point)
-					real = my_unsetalias(inf, strings);
-				else
-				{
-					my_unsetalias(inf, strings);
-					real = (my_addnodeend(&(inf->my_alias), strings, 0) == NULL);
-				}
-				*point = a;
-				return (real);
-			default:
-				point++;
-		}
-	}
+	my_pointer = my_strchr(string, '=');
+	if (!my_pointer)
+		return (1);
+	if (!*++my_pointer)
+		return (my_unsetalias(inf, string));
 
-	return (1);
+	my_unsetalias(inf, string);
+	return (my_addnodeend(&(inf->my_alias), string, 0) == NULL);
 }
 /**
  * my_printalias - prints an alias string to stdout
