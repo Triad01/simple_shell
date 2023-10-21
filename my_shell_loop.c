@@ -9,8 +9,8 @@
 int my_hsh(info_t *inf, char **avs);
 int my_hsh(info_t *inf, char **avs)
 {
-	ssize_t in;
-	int my_b;
+	ssize_t in = 0;
+	int my_b = 0;
 
 	while (in != -1 && my_b != -2)
 	{
@@ -135,28 +135,18 @@ void my_forkcmd(info_t *inf)
 			if (execve(inf->my_path, inf->my_argv, my_getenvironment(inf)) == -1)
 			{
 				my_freeinfo(inf, 1);
-				switch (errno)
-				{
-					case EACCES:
-						exit(126);
-					default:
-						exit(1);
-				}
-
+				if (errno == EACCES)
+					exit(126);
+				exit(1);
 			}
 			break;
-
 		default:
 			wait(&(inf->my_status));
 			if (WIFEXITED(inf->my_status))
 			{
 				inf->my_status = WEXITSTATUS(inf->my_status);
-				switch (inf->my_status)
-				{
-					case 126:
-						my_printerror(inf, "Permission denied\n");
-						break;
-				}
+				if (inf->my_status == 126)
+					my_printerror(inf, "Permission denied\n");
 			}
 			break;
 	}
